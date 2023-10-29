@@ -1,0 +1,28 @@
+﻿@model IEnumerable<MVC.Models.RoomDto>
+@{
+    ViewData["Title"] = "GetAllRooms";
+}
+
+<h2>Rooms</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <tr>
+        <th>Room Number</th>
+        <th>Room Type</th>
+        <th>Actions</th>
+    </tr>
+    @foreach (var room in Model)
+    {
+        <tr>
+            <td>@room.Number</td>
+            <td>@room.Type</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@room.Id">Details</a>
+            </td>
+        </tr>
+    }
+</table>

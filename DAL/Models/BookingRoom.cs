@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 
 namespace DAL.Models
 {
-    public class Branch
+    public class BookingRoom
     {
         [Key]
         public int Id { get; set; }
-        public string Location { get; set; }
-        
-        public ICollection<Room> Rooms { get; set; }=new List<Room>();
-        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+        public int BookingId { get; set; }
+        public Booking Booking { get; set; }
+
+        public int RoomId { get; set; }
+        public Room Room { get; set; }
+
+        public int NumberOfPersons { get; set; }
     }
 }

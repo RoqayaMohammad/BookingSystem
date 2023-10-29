@@ -56,7 +56,7 @@ namespace webApi.Controllers
 
             await _repository.CreateAsync(RoomEntity);
 
-            return CreatedAtAction(nameof(GetById), new { id = RoomDTO.Id }, RoomDTO);
+            return CreatedAtAction(nameof(GetById), new { id = RoomEntity.Id }, RoomDTO);
 
 
         }

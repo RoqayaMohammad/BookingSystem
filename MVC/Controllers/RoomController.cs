@@ -2,50 +2,46 @@
 using MVC.Models;
 using MVC.Services;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Http;
-
 
 namespace MVC.Controllers
 {
-    public class BranchController : Controller
+    public class RoomController : Controller
     {
         public readonly IConfiguration _configuration;
-        public BranchController(IConfiguration configuration)
+        public RoomController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
         [HttpGet]
-        public async Task<ActionResult> GetAllBranches()
+        public async Task<ActionResult> GetAllRooms()
         {
             try
             {
                 ServiceRepository serviceObj = new ServiceRepository(_configuration);
-                HttpResponseMessage response = await serviceObj.GetResponse("api/branch");
+                HttpResponseMessage response = await serviceObj.GetResponse("api/Room");
                 response.EnsureSuccessStatusCode();
                 string content = await response.Content.ReadAsStringAsync();
-                 List < BranchDto > branches = JsonConvert.DeserializeObject<List<BranchDto>>(content);
-               // List<BranchDto> branches =  response.Content.ReadAsStringAsync<List<BranchDto>>().Result;
-                ViewBag.Title = "All Branches";
-                return View(branches);
+                List<RoomDto> rooms = JsonConvert.DeserializeObject<List<RoomDto>>(content);
+               
+                ViewBag.Title = "All Rooms";
+                return View(rooms);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e ;
+                throw;
             }
         }
         [HttpGet]
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> GetById(int id)
         {
             ServiceRepository serviceObj = new ServiceRepository(_configuration);
             HttpResponseMessage response = await serviceObj.GetResponse("api/branch/" + id.ToString());
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-            BranchDto branch = JsonConvert.DeserializeObject<BranchDto>(content);
+            RoomDto room = JsonConvert.DeserializeObject<RoomDto>(content);
 
-            ViewBag.Title = "All Branches";
-            return View(branch);
+            ViewBag.Title = "All Rooms";
+            return View(room);
         }
 
         [HttpGet]
@@ -54,44 +50,44 @@ namespace MVC.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Create(BranchDto branch)
+        public ActionResult Create(RoomDto room)
         {
             ServiceRepository serviceObj = new ServiceRepository(_configuration);
-            HttpResponseMessage response = serviceObj.PostResponse("api/branch", branch);
+            HttpResponseMessage response = serviceObj.PostResponse("api/Room", room);
             response.EnsureSuccessStatusCode();
-            return RedirectToAction("GetAllBranches");
+            return RedirectToAction("GetAllRooms");
         }
 
 
         [HttpGet]
-        public async Task<ActionResult> EditBranch(int id)
+        public async Task<ActionResult> Update(int id)
         {
-            
+
             ServiceRepository serviceObj = new ServiceRepository(_configuration);
-            HttpResponseMessage response = await serviceObj.GetResponse($"api/branch/{id}" );
+            HttpResponseMessage response = await serviceObj.GetResponse($"api/Room/{id}");
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-            BranchDto branch = JsonConvert.DeserializeObject<BranchDto>(content);
+            RoomDto room = JsonConvert.DeserializeObject<RoomDto>(content);
 
-            ViewBag.Title = "All Branches";
-            return View(branch);
+            ViewBag.Title = "All Rooms";
+            return View(room);
         }
         [HttpPost]
-        public async Task<ActionResult> EditBranch(BranchDto branch)
+        public async Task<ActionResult> Update(RoomDto room)
         {
             ServiceRepository serviceObj = new ServiceRepository(_configuration);
-            HttpResponseMessage response = await serviceObj.PutResponse("api/branch/"+ branch.Id, branch);
+            HttpResponseMessage response = await serviceObj.PutResponse("api/branch/" + room.Id, room);
             response.EnsureSuccessStatusCode();
-            return RedirectToAction("GetAllBranches");
+            return RedirectToAction("GetAllRooms");
         }
 
         [HttpDelete]
         public ActionResult Delete(int id)
         {
             ServiceRepository serviceObj = new ServiceRepository(_configuration);
-            HttpResponseMessage response = serviceObj.DeleteResponse("api/branch/" + id.ToString());
+            HttpResponseMessage response = serviceObj.DeleteResponse("api/Room/" + id.ToString());
             response.EnsureSuccessStatusCode();
-            return RedirectToAction("GetAllBranches");
+            return RedirectToAction("GetAllRooms");
         }
     }
 }

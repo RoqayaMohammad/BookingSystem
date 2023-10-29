@@ -1,4 +1,6 @@
-﻿namespace MVC.Services
+﻿using System.Net;
+
+namespace MVC.Services
 {
     public class ServiceRepository
     {
@@ -6,6 +8,7 @@
         public HttpClient Client { get; set; }
         public ServiceRepository(IConfiguration configuration)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _configuration = configuration;
             Client = new HttpClient();
             string serviceUrl = _configuration["ServiceUrl"];

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace webApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231027172003_InitialCreate")]
+    [Migration("20231028182745_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,21 +24,6 @@ namespace webApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BookingRoom", b =>
-                {
-                    b.Property<int>("BookingsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookingsId", "RoomsId");
-
-                    b.HasIndex("RoomsId");
-
-                    b.ToTable("BookingRoom");
-                });
 
             modelBuilder.Entity("DAL.Models.Booking", b =>
                 {
@@ -58,11 +43,14 @@ namespace webApi.Migrations
                     b.Property<DateTime>("CheckInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CheckOutDate")
+                    b.Property<DateTime?>("CheckOutDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("HasPreviousBookings")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDiscounted")
                         .HasColumnType("bit");
@@ -77,6 +65,32 @@ namespace webApi.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Booking");
+                });
+
+            modelBuilder.Entity("DAL.Models.BookingRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfPersons")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("BookingRooms");
                 });
 
             modelBuilder.Entity("DAL.Models.Branch", b =>
@@ -141,21 +155,6 @@ namespace webApi.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("BookingRoom", b =>
-                {
-                    b.HasOne("DAL.Models.Booking", null)
-                        .WithMany()
-                        .HasForeignKey("BookingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DAL.Models.Room", null)
-                        .WithMany()
-                        .HasForeignKey("RoomsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DAL.Models.Booking", b =>
                 {
                     b.HasOne("DAL.Models.Branch", "Branch")
@@ -175,6 +174,25 @@ namespace webApi.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("DAL.Models.BookingRoom", b =>
+                {
+                    b.HasOne("DAL.Models.Booking", "Booking")
+                        .WithMany("BookingRooms")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.Room", "Room")
+                        .WithMany("BookingRooms")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Room");
+                });
+
             modelBuilder.Entity("DAL.Models.Room", b =>
                 {
                     b.HasOne("DAL.Models.Branch", "Branch")
@@ -184,6 +202,11 @@ namespace webApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+                });
+
+            modelBuilder.Entity("DAL.Models.Booking", b =>
+                {
+                    b.Navigation("BookingRooms");
                 });
 
             modelBuilder.Entity("DAL.Models.Branch", b =>
@@ -196,6 +219,11 @@ namespace webApi.Migrations
             modelBuilder.Entity("DAL.Models.Customer", b =>
                 {
                     b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("DAL.Models.Room", b =>
+                {
+                    b.Navigation("BookingRooms");
                 });
 #pragma warning restore 612, 618
         }

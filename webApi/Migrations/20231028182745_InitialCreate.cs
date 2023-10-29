@@ -67,11 +67,12 @@ namespace webApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookingName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsDiscounted = table.Column<bool>(type: "bit", nullable: false),
                     BranchId = table.Column<int>(type: "int", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    HasPreviousBookings = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,56 +91,64 @@ namespace webApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-        //    migrationBuilder.CreateTable(
-        //        name: "BookingRoom",
-        //        columns: table => new
-        //        {
-        //            BookingsId = table.Column<int>(type: "int", nullable: false),
-        //            RoomsId = table.Column<int>(type: "int", nullable: false)
-        //        },
-        //        constraints: table =>
-        //        {
-        //            table.PrimaryKey("PK_BookingRoom", x => new { x.BookingsId, x.RoomsId });
-        //            table.ForeignKey(
-        //                name: "FK_BookingRoom_Booking_BookingsId",
-        //                column: x => x.BookingsId,
-        //                principalTable: "Booking",
-        //                principalColumn: "Id",
-        //                onDelete: ReferentialAction.Cascade);
-        //            table.ForeignKey(
-        //                name: "FK_BookingRoom_Rooms_RoomsId",
-        //                column: x => x.RoomsId,
-        //                principalTable: "Rooms",
-        //                principalColumn: "Id",
-        //                onDelete: ReferentialAction.Cascade);
-        //        });
+            migrationBuilder.CreateTable(
+                name: "BookingRooms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BookingId = table.Column<int>(type: "int", nullable: false),
+                    RoomId = table.Column<int>(type: "int", nullable: false),
+                    NumberOfPersons = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookingRooms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BookingRooms_Booking_BookingId",
+                        column: x => x.BookingId,
+                        principalTable: "Booking",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BookingRooms_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
 
-        //    migrationBuilder.CreateIndex(
-        //        name: "IX_Booking_BranchId",
-        //        table: "Booking",
-        //        column: "BranchId");
+            migrationBuilder.CreateIndex(
+                name: "IX_Booking_BranchId",
+                table: "Booking",
+                column: "BranchId");
 
-        //    migrationBuilder.CreateIndex(
-        //        name: "IX_Booking_CustomerId",
-        //        table: "Booking",
-        //        column: "CustomerId");
+            migrationBuilder.CreateIndex(
+                name: "IX_Booking_CustomerId",
+                table: "Booking",
+                column: "CustomerId");
 
-        //    migrationBuilder.CreateIndex(
-        //        name: "IX_BookingRoom_RoomsId",
-        //        table: "BookingRoom",
-        //        column: "RoomsId");
+            migrationBuilder.CreateIndex(
+                name: "IX_BookingRooms_BookingId",
+                table: "BookingRooms",
+                column: "BookingId");
 
-        //    migrationBuilder.CreateIndex(
-        //        name: "IX_Rooms_BranchId",
-        //        table: "Rooms",
-        //        column: "BranchId");
+            migrationBuilder.CreateIndex(
+                name: "IX_BookingRooms_RoomId",
+                table: "BookingRooms",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rooms_BranchId",
+                table: "Rooms",
+                column: "BranchId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.DropTable(
-            //    name: "BookingRoom");
+            migrationBuilder.DropTable(
+                name: "BookingRooms");
 
             migrationBuilder.DropTable(
                 name: "Booking");

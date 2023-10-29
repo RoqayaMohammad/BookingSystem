@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
+using System.Net;
 
 namespace MVC
 {
@@ -12,7 +13,7 @@ namespace MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+           // ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,6 +28,7 @@ namespace MVC
             app.UseStaticFiles();
 
             app.UseRouting();
+            
 
             app.UseAuthorization();
 

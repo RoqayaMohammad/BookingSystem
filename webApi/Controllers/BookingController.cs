@@ -54,10 +54,22 @@ namespace webApi.Controllers
             public async Task<ActionResult<BookindDTO>> Create(BookindDTO BookindDTO)
             {
                 var BookingEntity = _mapper.Map<Booking>(BookindDTO);
+                BookingEntity.CheckInDate = DateTime.UtcNow;
+                if(ApplyDiscount(BookingEntity.CustomerId,BookingEntity))
+                {
+                BookingEntity.TotalPrice *= 0.05M;
+                BookingEntity.IsDiscounted = true;
+
+                }
+                else
+                {
+                BookingEntity.IsDiscounted = false;
+
+                }
 
                 await _repository.CreateAsync(BookingEntity);
 
-                return CreatedAtAction(nameof(GetById), new { id = BookindDTO.Id }, BookindDTO);
+                return CreatedAtAction(nameof(GetById), new { id = BookingEntity.Id }, BookindDTO);
 
 
             }
@@ -84,6 +96,18 @@ namespace webApi.Controllers
 
                 return NoContent();
             }
-        
+        [NonAction]
+        public bool ApplyDiscount(int CustomerId, Booking booking)
+        {
+            var customer=_context.Customer.Find(CustomerId);
+            if (customer.HasBookedPreviously)
+            {
+                return true;
+                //booking.TotalPrice *= 0.05M;
+                //booking.IsDiscounted = true;
+            }
+            return false;
+        }
+
     }
 }

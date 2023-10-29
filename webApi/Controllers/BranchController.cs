@@ -26,7 +26,7 @@ namespace webApi.Controllers
         
         
         [HttpGet]
-        public async Task<ActionResult<List<DTOs.BranchDto>>> GetAllBranches()
+        public async Task<ActionResult<List<BranchDto>>> GetAllBranches()
         {
             var branches=await _repository.GetAll();
            
@@ -57,7 +57,7 @@ namespace webApi.Controllers
 
             await _repository.CreateAsync(BranchEntity);
             
-            return CreatedAtAction(nameof(Details), new { id = BranchEntity.Id }, BranchEntity);
+            return CreatedAtAction(nameof(Details), new { id = BranchDTO.Id }, BranchEntity);
 
 
         }
